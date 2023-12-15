@@ -198,6 +198,11 @@ require('lazy').setup({
     priority = 1000,
     config = function()
       vim.cmd.colorscheme 'tokyonight-night'
+      local colors = require("tokyonight.colors").setup()
+      vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+      vim.api.nvim_set_hl(0, 'LineNrAbove', { bg = colors.bg, fg = colors.fg_gutter })
+      vim.api.nvim_set_hl(0, 'LineNr', { bg = colors.bg, fg = colors.fg_dark })
+      vim.api.nvim_set_hl(0, 'LineNrBelow', { bg = colors.bg, fg = colors.fg_gutter })
     end,
     opts = {
       transparent = true,              -- Enable this to disable setting the background color
@@ -390,6 +395,14 @@ require('telescope').setup {
       },
     },
   },
+  extensions = {
+    fzf = {
+      fuzzy = true,
+      override_generic_sorter = true,
+      override_file_sorter = true,
+      case_mode = "smart_case",
+    }
+  }
 }
 
 -- Enable telescope fzf native, if installed
@@ -471,10 +484,10 @@ vim.defer_fn(function()
     sync_install = false,
 
     -- List of parsers to ignore installing (or "all")
-    ignore_install = { "javascript" },
+    ignore_install = {},
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
-    auto_install = false,
+    auto_install = true,
 
     highlight = { enable = true },
     indent = { enable = true },
@@ -573,6 +586,7 @@ local on_attach = function(_, bufnr)
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
 
+  nmap('<leader>f', vim.lsp.buf.format(), '[F]ormat')
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
@@ -660,6 +674,7 @@ local luasnip = require 'luasnip'
 require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
+local cmp_select = { behavior = cmp.SelectBehavior.Select }
 cmp.setup {
   snippet = {
     expand = function(args)
@@ -670,8 +685,24 @@ cmp.setup {
     completeopt = 'menu,menuone,noinsert',
   },
   mapping = cmp.mapping.preset.insert {
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<C-n>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item(cmp_select)
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+    ['<C-p>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item(cmp_select)
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
@@ -679,24 +710,10 @@ cmp.setup {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_locally_jumpable() then
-        luasnip.expand_or_jump()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.locally_jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
+    -- disable completion with tab
+    -- this helps with copilot setup
+    ['<Tab>'] = nil,
+    ['<S-Tab>'] = nil
   },
   sources = {
     { name = 'nvim_lsp' },
