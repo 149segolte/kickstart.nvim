@@ -93,8 +93,63 @@ return {
         dependencies = { "nvim-tree/nvim-web-devicons" },
         opts = {},
         config = function()
+            vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>",
+                { silent = true, noremap = true, desc = "Trouble toggle" })
             vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>",
                 { silent = true, noremap = true, desc = "Trouble quickfix" })
+        end
+    },
+
+    {
+        "mhartington/formatter.nvim",
+        opts = {
+            logging = true,
+            filetype = {
+                javascript = {
+                    -- prettierd
+                    function()
+                        return {
+                            exe = "prettierd",
+                            args = { vim.api.nvim_buf_get_name(0) },
+                            stdin = true
+                        }
+                    end
+                },
+                typescript = {
+                    -- prettierd
+                    function()
+                        return {
+                            exe = "prettierd",
+                            args = { vim.api.nvim_buf_get_name(0) },
+                            stdin = true
+                        }
+                    end
+                },
+                typescriptreact = {
+                    -- prettierd
+                    function()
+                        return {
+                            exe = "prettierd",
+                            args = { vim.api.nvim_buf_get_name(0) },
+                            stdin = true
+                        }
+                    end
+                },
+                javascriptreact = {
+                    -- prettierd
+                    function()
+                        return {
+                            exe = "prettierd",
+                            args = { vim.api.nvim_buf_get_name(0) },
+                            stdin = true
+                        }
+                    end
+                }
+            }
+        },
+        config = function()
+            vim.keymap.set("n", "<leader>fm", "<cmd>FormatWrite<cr>",
+                { silent = true, noremap = true, desc = "Format" })
         end
     },
 }
