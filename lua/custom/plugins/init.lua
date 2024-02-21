@@ -152,4 +152,51 @@ return {
                 { silent = true, noremap = true, desc = "Format" })
         end
     },
+    {
+        'gsuuon/model.nvim',
+
+        -- Don't need these if lazy = false
+        cmd = { 'M', 'Model', 'Mchat' },
+        init = function()
+            vim.filetype.add({
+                extension = {
+                    mchat = 'mchat',
+                }
+            })
+        end,
+        ft = 'mchat',
+
+        keys = {
+            { '<C-m>d',       ':Mdelete<cr>', mode = 'n' },
+            { '<C-m>s',       ':Mselect<cr>', mode = 'n' },
+            { '<C-m><space>', ':Mchat<cr>',   mode = 'n' }
+        },
+
+        config = function()
+            local llamacpp = require("model.providers.openai")
+            local util = require("model.util")
+            require("model").setup({
+                hl_group = "Substitute",
+                prompts = util.module.autoload("prompt_library"),
+                default_prompt = {
+                    provider = llamacpp,
+                    options = {
+                        url = "http://localhost:8080/v1/",
+                    },
+                    builder = function(input)
+                        return {
+                            model = "gpt-3.5-turbo",
+                            messages = {
+                                {
+                                    role = "system",
+                                    content = "You are helpful assistant. Write code for the user prompts.",
+                                },
+                                { role = "user", content = input },
+                            },
+                        }
+                    end,
+                },
+            })
+        end,
+    }
 }
