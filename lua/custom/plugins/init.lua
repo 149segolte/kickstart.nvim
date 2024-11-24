@@ -3,200 +3,148 @@
 --
 -- See the kickstart.nvim README for more information
 return {
-    {
-        "ThePrimeagen/harpoon",
-        branch = "harpoon2",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        config = function()
-            local harpoon = require("harpoon")
-            -- REQUIRED
-            harpoon:setup()
-            -- REQUIRED
-            vim.keymap.set("n", "<leader>ha", function() harpoon:list():append() end,
-                { desc = "Add current file to harpoon" })
-            vim.keymap.set("n", "<leader>hh", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
-                { desc = "Toggle the UI for harpoon" })
-            vim.keymap.set("n", "<leader>h1", function() harpoon:list():select(1) end,
-                { desc = "Go to first file in harpoon" })
-            vim.keymap.set("n", "<leader>h2", function() harpoon:list():select(2) end,
-                { desc = "Go to second file in harpoon" })
-            vim.keymap.set("n", "<leader>h3", function() harpoon:list():select(3) end,
-                { desc = "Go to third file in harpoon" })
-            vim.keymap.set("n", "<leader>h4", function() harpoon:list():select(4) end,
-                { desc = "Go to fourth file in harpoon" })
-        end
-    },
-    {
-        'mbbill/undotree',
-        config = function()
-            vim.keymap.set("n", "<leader>u", vim.cmd.undotreetoggle)
-        end
-    },
-    {
-        "laytan/cloak.nvim",
-        opts = {
-            enabled = true,
-            cloak_character = "*",
-            -- The applied highlight group (colors) on the cloaking, see `:h highlight`.
-            highlight_group = "Comment",
-            patterns = {
-                {
-                    -- Match any file starting with ".env".
-                    -- This can be a table to match multiple file patterns.
-                    file_pattern = {
-                        ".env*",
-                        "wrangler.toml",
-                        ".dev.vars",
-                    },
-                    -- Match an equals sign and any character after it.
-                    -- This can also be a table of patterns to cloak,
-                    -- example: cloak_pattern = { ":.+", "-.+" } for yaml files.
-                    cloak_pattern = "=.+"
-                },
-            },
-        }
-    },
-    {
-        "ThePrimeagen/refactoring.nvim",
-        opts = {},
-        config = function()
-            vim.api.nvim_set_keymap(
-                "v",
-                "<leader>rr",
-                ":lua require('refactoring').select_refactor()<CR>",
-                { noremap = true, silent = true, expr = false, desc = "Refactor selection" }
-            )
-        end
-    },
-    'github/copilot.vim',
-    {
-        "folke/zen-mode.nvim",
-        opts = {
-            window = {
-                width = 90,
-                options = {
-                    number = true,
-                    relativenumber = true,
-                }
-            },
-        },
-        config = function()
-            vim.keymap.set("n", "<leader>zz", function()
-                require("zen-mode").toggle()
-                vim.wo.wrap = false
-            end)
-        end
-    },
+  -- Git related plugin
+  'tpope/vim-fugitive',
 
-    {
-        "folke/trouble.nvim",
+  { -- Show undo history in a tree view
+    'mbbill/undotree',
+    config = function()
+      vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle, { desc = 'Toggle Undo Tree' })
+    end,
+  },
+
+  -- Add a statusline to your Neovim setup
+  {
+    -- Set lualine as statusline
+    'nvim-lualine/lualine.nvim',
+    -- See `:help lualine.txt`
+    opts = {
+      options = {
+        icons_enabled = vim.g.have_nerd_font,
+        theme = 'tokyonight',
+        component_separators = '|',
+        section_separators = '',
+      },
+    },
+  },
+
+  { 'laytan/cloak.nvim', opts = {} },
+
+  'github/copilot.vim',
+
+  {
+    'folke/trouble.nvim',
         dependencies = { "nvim-tree/nvim-web-devicons" },
         opts = {},
-        config = function()
-            vim.keymap.set("n", "<leader>xx", "<cmd>TroubleToggle<cr>",
-                { silent = true, noremap = true, desc = "Trouble toggle" })
-            vim.keymap.set("n", "<leader>xq", "<cmd>TroubleToggle quickfix<cr>",
-                { silent = true, noremap = true, desc = "Trouble quickfix" })
-        end
+    cmd = 'Trouble',
+    keys = {
+      {
+        '<leader>xx',
+        '<cmd>Trouble diagnostics toggle<cr>',
+        desc = 'Diagnostics (Trouble)',
+      },
+      {
+        '<leader>xX',
+        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+        desc = 'Buffer Diagnostics (Trouble)',
+      },
+      {
+        '<leader>cs',
+        '<cmd>Trouble symbols toggle focus=false<cr>',
+        desc = 'Symbols (Trouble)',
+      },
+      {
+        '<leader>cl',
+        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+        desc = 'LSP Definitions / references / ... (Trouble)',
+      },
+      {
+        '<leader>xL',
+        '<cmd>Trouble loclist toggle<cr>',
+        desc = 'Location List (Trouble)',
+      },
+      {
+        '<leader>xQ',
+        '<cmd>Trouble qflist toggle<cr>',
+        desc = 'Quickfix List (Trouble)',
+      },
     },
+  },
 
-    {
-        "mhartington/formatter.nvim",
-        opts = {
-            logging = true,
-            filetype = {
-                javascript = {
-                    -- prettierd
-                    function()
-                        return {
-                            exe = "prettierd",
-                            args = { vim.api.nvim_buf_get_name(0) },
-                            stdin = true
-                        }
-                    end
-                },
-                typescript = {
-                    -- prettierd
-                    function()
-                        return {
-                            exe = "prettierd",
-                            args = { vim.api.nvim_buf_get_name(0) },
-                            stdin = true
-                        }
-                    end
-                },
-                typescriptreact = {
-                    -- prettierd
-                    function()
-                        return {
-                            exe = "prettierd",
-                            args = { vim.api.nvim_buf_get_name(0) },
-                            stdin = true
-                        }
-                    end
-                },
-                javascriptreact = {
-                    -- prettierd
-                    function()
-                        return {
-                            exe = "prettierd",
-                            args = { vim.api.nvim_buf_get_name(0) },
-                            stdin = true
-                        }
-                    end
-                }
-            }
+  {
+    'folke/zen-mode.nvim',
+    opts = {
+      window = {
+        width = 90,
+        options = {
+          number = true,
+          relativenumber = true,
         },
-        config = function()
-            vim.keymap.set("n", "<leader>fm", "<cmd>FormatWrite<cr>",
-                { silent = true, noremap = true, desc = "Format" })
-        end
+      },
     },
-    {
-        'gsuuon/model.nvim',
+    config = function()
+      vim.keymap.set('n', '<leader>zz', function()
+        require('zen-mode').toggle()
+        vim.wo.wrap = false
+      end)
+    end,
+  },
 
-        -- Don't need these if lazy = false
-        cmd = { 'M', 'Model', 'Mchat' },
-        init = function()
-            vim.filetype.add({
-                extension = {
-                    mchat = 'mchat',
-                }
-            })
-        end,
-        ft = 'mchat',
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local harpoon = require 'harpoon'
+      harpoon:setup {}
 
-        keys = {
-            { '<C-m>d',       ':Mdelete<cr>', mode = 'n' },
-            { '<C-m>s',       ':Mselect<cr>', mode = 'n' },
-            { '<C-m><space>', ':Mchat<cr>',   mode = 'n' }
-        },
+      -- basic telescope configuration
+      local conf = require('telescope.config').values
+      local function toggle_telescope(harpoon_files)
+        local file_paths = {}
+        for _, item in ipairs(harpoon_files.items) do
+          table.insert(file_paths, item.value)
+        end
 
-        config = function()
-            local llamacpp = require("model.providers.openai")
-            local util = require("model.util")
-            require("model").setup({
-                hl_group = "Substitute",
-                prompts = util.module.autoload("prompt_library"),
-                default_prompt = {
-                    provider = llamacpp,
-                    options = {
-                        url = "http://localhost:8080/v1/",
-                    },
-                    builder = function(input)
-                        return {
-                            model = "gpt-3.5-turbo",
-                            messages = {
-                                {
-                                    role = "system",
-                                    content = "You are helpful assistant. Write code for the user prompts.",
-                                },
-                                { role = "user", content = input },
-                            },
-                        }
-                    end,
-                },
-            })
-        end,
-    }
+        require('telescope.pickers')
+          .new({}, {
+            prompt_title = 'Harpoon',
+            finder = require('telescope.finders').new_table {
+              results = file_paths,
+            },
+            previewer = conf.file_previewer {},
+            sorter = conf.generic_sorter {},
+          })
+          :find()
+      end
+
+      vim.keymap.set('n', '<C-e>', function()
+        toggle_telescope(harpoon:list())
+      end, { desc = 'Open harpoon window' })
+      vim.keymap.set('n', '<leader>a', function()
+        harpoon:list():add()
+      end, { desc = 'Add file to harpoon' })
+
+      vim.keymap.set('n', '<leader>hl1', function()
+        harpoon:list():select(1)
+      end, { desc = 'Select harpoon list item 1' })
+      vim.keymap.set('n', '<leader>hl2', function()
+        harpoon:list():select(2)
+      end, { desc = 'Select harpoon list item 2' })
+      vim.keymap.set('n', '<leader>hl3', function()
+        harpoon:list():select(3)
+      end, { desc = 'Select harpoon list item 3' })
+      vim.keymap.set('n', '<leader>hl4', function()
+        harpoon:list():select(4)
+      end, { desc = 'Select harpoon list item 4' })
+
+      -- Toggle previous & next buffers stored within Harpoon list
+      vim.keymap.set('n', '<leader>hlp', function()
+        harpoon:list():prev()
+      end, { desc = 'Select previous harpoon list item' })
+      vim.keymap.set('n', '<leader>hln', function()
+        harpoon:list():next()
+      end, { desc = 'Select next harpoon list item' })
+    end,
+  },
 }
