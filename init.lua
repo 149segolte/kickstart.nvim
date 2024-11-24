@@ -170,6 +170,8 @@ vim.opt.scrolloff = 8
 
 -- Custom keybinds
 -- Toggle format on save
+vim.g.format_on_save = true
+
 vim.keymap.set('n', '<leader>fg', function()
   if vim.g.format_on_save then
     vim.g.format_on_save = false
@@ -178,7 +180,7 @@ vim.keymap.set('n', '<leader>fg', function()
   else
     vim.g.format_on_save = true
     vim.b.format_on_save = true
-    print 'format_on_save dnabled globally'
+    print 'format_on_save enabled globally'
   end
 end, { desc = 'Toggle format on save globally' })
 vim.keymap.set('n', '<leader>fb', function()
@@ -188,7 +190,7 @@ vim.keymap.set('n', '<leader>fb', function()
   else
     vim.g.format_on_save = true
     vim.b.format_on_save = true
-    print 'format_on_save dnabled in current buffer'
+    print 'format_on_save enabled in current buffer'
   end
 end, { desc = 'Toggle format on save for current buffer' })
 
@@ -197,8 +199,8 @@ end, { desc = 'Toggle format on save for current buffer' })
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Moving selection up and down
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -781,7 +783,7 @@ require('lazy').setup({
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         python = { 'isort', 'black' },
-        
+
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { { 'prettierd', 'prettier', stop_after_first = true } },
         javascriptreact = { { 'prettierd', 'prettier', stop_after_first = true } },
@@ -792,9 +794,6 @@ require('lazy').setup({
         cpp = { 'clang-format' },
       },
     },
-    config = function()
-      vim.g.format_on_save = true
-    end,
   },
 
   { -- Autocompletion
