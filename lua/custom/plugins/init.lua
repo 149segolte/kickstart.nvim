@@ -25,17 +25,32 @@ return {
         component_separators = '|',
         section_separators = '',
       },
+      sections = {
+        lualine_x = { 'copilot', 'encoding', 'fileformat', 'filetype' },
+      },
     },
   },
 
   { 'laytan/cloak.nvim', opts = {} },
 
-  'github/copilot.vim',
+  {
+    'zbirenbaum/copilot.lua',
+    cmd = 'Copilot',
+    event = 'InsertEnter',
+    config = function()
+      require('copilot').setup {}
+    end,
+  },
+
+  {
+    'AndreM222/copilot-lualine',
+    dependencies = { 'zbirenbaum/copilot.lua' },
+  },
 
   {
     'folke/trouble.nvim',
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        opts = {},
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    opts = {},
     cmd = 'Trouble',
     keys = {
       {
