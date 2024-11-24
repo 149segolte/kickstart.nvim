@@ -783,7 +783,7 @@ require('lazy').setup({
         python = { 'isort', 'black' },
         
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        javascript = { { 'prettierd', 'prettier' stop_after_first = true } },
+        javascript = { { 'prettierd', 'prettier', stop_after_first = true } },
         javascriptreact = { { 'prettierd', 'prettier', stop_after_first = true } },
         typescript = { { 'prettierd', 'prettier', stop_after_first = true } },
         typescriptreact = { { 'prettierd', 'prettier', stop_after_first = true } },
@@ -936,10 +936,10 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
     opts = {
-      transparent = true,              -- Enable this to disable setting the background color
-      sidebars = { 'qf', 'help' },     -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
+      transparent = true, -- Enable this to disable setting the background color
+      sidebars = { 'qf', 'help' }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
       hide_inactive_statusline = true, -- Enabling this option, will hide inactive statuslines and replace them with a thin border instead. Should work with the standard **StatusLine** and **LuaLine**.
-      dim_inactive = true,             -- dims inactive windows
+      dim_inactive = true, -- dims inactive windows
     },
   },
 
