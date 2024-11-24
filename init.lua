@@ -92,12 +92,10 @@ vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
-vim.g.format_on_save = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
-
 --  For more options, you can see `:help option-list`
 
 -- Make line numbers default
@@ -122,7 +120,6 @@ end)
 
 -- Enable break indent
 vim.opt.breakindent = true
-vim.opt.smartindent = true
 
 -- Enable 4 wide tab enforcement
 vim.opt.tabstop = 4
@@ -133,8 +130,6 @@ vim.opt.expandtab = true
 -- Save undo history
 vim.opt.undofile = true
 vim.opt.swapfile = false
-vim.opt.backup = false
-vim.opt.undodir = vim.fn.expand '~/.nvim/undodir'
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.opt.ignorecase = true
@@ -149,15 +144,11 @@ vim.opt.updatetime = 50
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
-vim.opt.timeout = true
 vim.opt.timeoutlen = 300
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
 vim.opt.splitbelow = true
-
--- NOTE: You should make sure your terminal supports this
-vim.opt.termguicolors = true
 
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
@@ -174,39 +165,30 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 8
 
--- Certain custom options
-vim.g.netrw_browse_split = 0
-vim.g.netrw_banner = 0
-vim.g.netrw_winsize = 25
-
-vim.o.scrolloff = 8
-vim.o.signcolumn = "yes"
-vim.o.colorcolumn = "80"
-vim.opt.isfname:append("@-@")
-
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
 -- Custom keybinds
+-- Toggle format on save
 vim.keymap.set('n', '<leader>fg', function()
   if vim.g.format_on_save then
     vim.g.format_on_save = false
     vim.b.format_on_save = false
-    print 'Autoformat disabled globally'
+    print 'format_on_save disabled globally'
   else
     vim.g.format_on_save = true
     vim.b.format_on_save = true
-    print 'Autoformat enabled globally'
+    print 'format_on_save dnabled globally'
   end
 end, { desc = 'Toggle format on save globally' })
 vim.keymap.set('n', '<leader>fb', function()
   if vim.b.format_on_save then
     vim.b.format_on_save = false
-    print 'Autoformat disabled in current buffer'
+    print 'format_on_save disabled in current buffer'
   else
     vim.g.format_on_save = true
     vim.b.format_on_save = true
-    print 'Autoformat enabled in current buffer'
+    print 'format_on_save dnabled in current buffer'
   end
 end, { desc = 'Toggle format on save for current buffer' })
 
@@ -217,13 +199,6 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Moving selection up and down
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-
--- greatest remap ever
-vim.keymap.set("x", "<leader>p", [["_dP]])
-
--- next greatest remap ever : asbjornHaland
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
-vim.keymap.set("n", "<leader>Y", [["+Y]])
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -250,26 +225,6 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- Helpful keybinds
--- -- Keymaps for better default experience
--- -- See `:help vim.keymap.set()`
--- vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-
--- -- Remap for dealing with word wrap
--- vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
--- vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-
--- -- Moving selection up and down
--- vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
--- vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-
--- -- greatest remap ever
--- vim.keymap.set("x", "<leader>p", [["_dP]])
-
--- -- next greatest remap ever : asbjornHaland
--- vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
--- vim.keymap.set("n", "<leader>Y", [["+Y]])
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -837,6 +792,9 @@ require('lazy').setup({
         cpp = { 'clang-format' },
       },
     },
+    config = function()
+      vim.g.format_on_save = true
+    end,
   },
 
   { -- Autocompletion
@@ -973,13 +931,6 @@ require('lazy').setup({
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-night'
-
-      -- You can also set highlights for the colorscheme here.
-      -- local colors = require("tokyonight.colors").setup()
-      -- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-      -- vim.api.nvim_set_hl(0, 'LineNrAbove', { bg = colors.bg, fg = colors.fg_gutter })
-      -- vim.api.nvim_set_hl(0, 'LineNr', { bg = colors.bg, fg = colors.fg_dark })
-      -- vim.api.nvim_set_hl(0, 'LineNrBelow', { bg = colors.bg, fg = colors.fg_gutter })
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
